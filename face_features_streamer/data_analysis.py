@@ -42,7 +42,8 @@ if __name__ == '__main__':
     # csv_file = "../openface_datasets/first_test_roll.csv"
 
     # csv_file = "../openface_datasets/smile_close_open.csv"
-    csv_file = "../openface_datasets/lips_open_close.csv"
+    # csv_file = "../openface_datasets/lips_open_close.csv"
+    csv_file = "../openface_datasets/lips_open_just.csv"
 
     plot_head_pose_data(csv_file)
 

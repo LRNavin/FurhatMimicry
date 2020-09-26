@@ -6,6 +6,8 @@ gesture_template = {
     "class": "furhatos.gestures.Gesture"
     }
 
+happy_threshold = 0.4
+mouth_open_threshold = 0.4
 # pitch (Rx), yaw (Ry), and roll (Rz)
 
 def single_gesture_gen(gesture_type, gesture_name, strength, speed, duration, reset="True"):
@@ -57,18 +59,25 @@ def set_head_pose_gesture(temp_dict, roll_strength, tilt_strength, pan_strength)
 
     return temp_dict
 
-def set_smile_gesture(temp_dict, smile_strength=1.0):
+def set_smile_gesture(temp_dict, happy_strength, smile_strength):
 
     # Set Smile boolean
-    temp_dict["params"][available_gestures.open_smile] = smile_strength
+    if happy_strength > happy_threshold:
+        # Happiness Detected AU_06 + AU_12
+        temp_dict["params"][available_gestures.open_smile] = smile_strength
+    else:
+        # Not Happy.
+        if smile_strength > mouth_open_threshold:
+            # Not Happy but mouth Open, where mouth Open = AU_25 (smile strength)
+            temp_dict["params"][available_gestures.say_big_aah] = smile_strength/2
 
     return temp_dict
 
 # available_gestures.roll_neck: roll_strength,
 # available_gestures.tilt_neck: tilt_strength
-def build_gesture_with(gesture_name, roll_strength, tilt_strength,
-                            pan_strength, speed=1.0, duration=2.0, reset="True",
-                            head_pose=True, smile_pose=False):
+def build_gesture_with(gesture_name, roll_strength, tilt_strength, pan_strength,
+                       happy_strength, smile_strength,
+                       speed=1.0, duration=2.0, reset="True"):
 
     gesture_def = {}
     gesture_def["class"] = "furhatos.gestures.Gesture"
@@ -77,10 +86,10 @@ def build_gesture_with(gesture_name, roll_strength, tilt_strength,
     gesture_detail = []
     # Create Gesture Type
     temp_dict = {"time": [speed], "params": {}}
-    if head_pose:
-        temp_dict = set_head_pose_gesture(temp_dict, roll_strength, tilt_strength, pan_strength)
-    if smile_pose:
-        temp_dict = set_smile_gesture(temp_dict)
+    # Set Head Pose Gesture
+    temp_dict = set_head_pose_gesture(temp_dict, roll_strength, tilt_strength, pan_strength)
+    # Set Smile Gesture
+    temp_dict = set_smile_gesture(temp_dict, happy_strength, smile_strength)
 
     gesture_detail.append(temp_dict)
 
@@ -91,5 +100,6 @@ def build_gesture_with(gesture_name, roll_strength, tilt_strength,
     # Setter
     gesture_def["frames"] = gesture_detail
 
+    print(gesture_def)
     return json.dumps(gesture_def)
 

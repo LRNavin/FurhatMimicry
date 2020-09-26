@@ -1,31 +1,37 @@
 
 import time
 from furhat_gestures import gesture_gen, gesture_trigger, available_gestures
-from face_features_streamer import csv_streamer
+from face_features_streamer import pose_csv_streamer as csv_streamer
 
 def main():
     gesture_type = available_gestures.roll_neck
     gesture_name = "Roll Neck"
     strength = -21.0
     speed = 0.2 #sec
-    duration = 3.0 #sec
+    duration = 1.0 #sec
     reset = "True"
 
     pose_data = csv_streamer.csv_head_pose_reader()
     smile_data = csv_streamer.csv_smile_intensity_reader()
 
-    for index, row in pose_data.iterrows():
-        # pitch (Rx), yaw (Ry), and roll (Rz)
-        # ' pose_Rx', ' pose_Ry', ' pose_Rz'
+    # pitch (Rx), yaw (Ry), and roll (Rz)
+    # ' pose_Rx', ' pose_Ry', ' pose_Rz'
+    for index, (pose_row, smile_row) in enumerate(zip(pose_data.iterrows(), smile_data.iterrows())):
 
-        gesture = gesture_gen.build_gesture_with(gesture_name=gesture_name,
-                                                 roll_strength=row[2],
-                                                 tilt_strength=row[0],
-                                                 pan_strength=row[1],
-                                                 speed=speed, duration=duration, reset=reset)
+        pose_row  = pose_row[1]
+        smile_row = smile_row[1]
 
         print(index)
-        print(gesture)
+        # print(smile_row[" AU25_r"])
+        # print(smile_row["Happy"])
+        gesture = gesture_gen.build_gesture_with(gesture_name=gesture_name,
+                                                 roll_strength=pose_row[" pose_Rz"],
+                                                 tilt_strength=pose_row[" pose_Rx"],
+                                                 pan_strength=pose_row[" pose_Ry"],
+                                                 happy_strength=smile_row["Happy"],
+                                                 smile_strength=smile_row[" AU25_r"],
+                                                 speed=speed, duration=duration, reset=reset)
+
         time.sleep(0.2)
 
         response = gesture_trigger.trigger_custom_gesture(gesture)

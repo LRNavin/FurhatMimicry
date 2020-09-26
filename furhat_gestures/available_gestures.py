@@ -49,7 +49,7 @@ say_aah = "PHONE_AAH"
 
     # PHONE_B_M_P,
 
-    # PHONE_BIGAAH,
+say_big_aah = "PHONE_BIGAAH"
 
     # PHONE_CH_J_SH,
 
