@@ -1,5 +1,6 @@
 import requests
-import constants
+from utilities import constants
+
 
 def trigger_custom_gesture(gesture_def):
     api_url = "furhat/actions/gesture"

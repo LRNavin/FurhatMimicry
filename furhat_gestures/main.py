@@ -1,13 +1,19 @@
 import time
-import constants
+from utilities import constants
 
 from furhat_gestures import gesture_gen, gesture_trigger
 from face_features_streamer import pose_csv_streamer as csv_streamer
 
 def main():
 
+    # Get head Pose data
     pose_data = csv_streamer.csv_head_pose_reader()
+    # Get Smile data
     smile_data = csv_streamer.csv_smile_intensity_reader()
+
+    # Add More data here ->>>>>>
+    # gaze_data = #
+
 
     # pitch (Rx), yaw (Ry), and roll (Rz)
     # ' pose_Rx', ' pose_Ry', ' pose_Rz'
